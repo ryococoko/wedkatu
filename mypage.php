@@ -1,9 +1,9 @@
 <?php
 
-ini_set('display_errors,1');
-
 error_reporting(E_ALL); //E_STRICTレベル以外のエラーを報告する
 ini_set('display_errors','On'); //画面にエラーを表示させるか
+ini_set('log_errors','on');//ログを取るか
+ini_set('error_log','php.log');//ログの出力ファイル指定
 
 session_start();
 
@@ -44,11 +44,11 @@ session_start();
                 <a href="index.php">ユーザー登録画面へ</a>
             </section>
 
-          <?php }else{ ?>
+    <?php }else{ ?>
 
-            <p>ログインしていないと見れません。</p>
+      <p>ログインしていないと見れません。</p>
 
-          <?php } ?>
+    <?php } ?>
 
   </body>
 </html>
