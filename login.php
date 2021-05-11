@@ -1,60 +1,60 @@
 <?php
 
-ini_set('display_errors,1');
-
 error_reporting(E_ALL); //E_STRICTレベル以外のエラーを報告する
 ini_set('display_errors','On'); //画面にエラーを表示させるか
+ini_set('log_errors','on');//ログを取るか
+ini_set('error_log','php.log');//ログの出力ファイル指定
 
 //post送信されていた場合
 if(!empty($_POST)){
 
-  //本業は最初にバリデーションを行うがを行うが、今回は省略
+  //本来は最初にバリデーションを行うが、今回は省略
 
-    //変数にユーザー情報を代入
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+  //変数にユーザー情報を代入
+  $email = $_POST['email'];
+  $pass = $_POST['pass'];
 
-    //DBへの接続準備
-       $dsn = 'mysql:dbname=php_sample09;host=localhost;charset=utf8';
-       $user = 'root';
-       $password = 'root';
-       $options = array(
-               // SQL実行失敗時に例外をスロー
-               PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-               // デフォルトフェッチモードを連想配列形式に設定
-               PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-               // バッファードクエリを使う(一度に結果セットをすべて取得し、サーバー負荷を軽減)
-               // SELECTで得た結果に対してもrowCountメソッドを使えるようにする
-               PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-           );
+  //DBへの接続準備
+  $dsn = 'mysql:dbname=php_sample09;host=localhost;charset=utf8';
+  $user = 'root';
+  $password = 'root';
+  $options = array(
+          // SQL実行失敗時に例外をスロー
+          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+          // デフォルトフェッチモードを連想配列形式に設定
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+          // バッファードクエリを使う(一度に結果セットをすべて取得し、サーバー負荷を軽減)
+          // SELECTで得た結果に対してもrowCountメソッドを使えるようにする
+          PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+      );
 
-       // PDOオブジェクト生成（DBへ接続）
-       $dbh = new PDO($dsn, $user, $password, $options);
+  // PDOオブジェクト生成（DBへ接続）
+  $dbh = new PDO($dsn, $user, $password, $options);
 
-       //SQL文（クエリー作成）
-       $stmt = $dbh->prepare('SELECT * FROM users WHERE email = email AND pass = :pass');
+  //SQL文（クエリー作成）
+  $stmt = $dbh->prepare('SELECT * FROM users WHERE email = :email AND pass = :pass');
 
-       //プレースホルダに値をセットし、SQL文を実行
-       $stmt->execute(array(':email' => $email, ':pass' => $pass));
+  //プレースホルダに値をセットし、SQL文を実行
+  $stmt->execute(array(':email' => $email, ':pass' => $pass));
 
-       $result = 0;
+  $result = 0;
 
-       $result = $stmt->fetch(PDO::FETCH_ASSOC);
+  $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-       //結果がゼロじゃない場合
-       if(!empty($result)){
+  //結果が０でない場合
+  if(!empty($result)){
 
-         //SESSION（セッション）を使うにsession_start()を呼び出し
-         session_start();
+    //SESSION（セッション）を使うにsession_start()を呼び出す
+    session_start();
 
-         //SESSION['login']に値を代入
-         $_SESSION['login'] = true;
+    //SESSION['login']に値を代入
+    $_SESSION['login'] = true;
 
-       //マイページへ
-       header("Location:mypage.php"); //headerメソッドはこのメソッドを実行する前にechoなど画面出力処理を行なっているとエラーになる。
+    //マイページへ遷移
+    header("Location:mypage.php"); //headerメソッドは、このメソッドを実行する前にechoなど画面出力処理を行っているとエラーになる。
+
+  }
 }
-}
-
 
 ?>
 
@@ -84,15 +84,15 @@ if(!empty($_POST)){
             margin-bottom: 10px;
             box-sizing: border-box;
         }
-        input[type="password"]{
-          color: #545454;
-          height: 60px;
-          width: 100%;
-          padding: 5px 10px;
-          font-size: 16px;
-          display: block;
-          margin-bottom: 10px;
-          box-sizing: border-box;
+      input[type="password"]{
+            color: #545454;
+            height: 60px;
+            width: 100%;
+            padding: 5px 10px;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
         input[type="submit"]{
             border: none;
@@ -121,7 +121,7 @@ if(!empty($_POST)){
   <body>
 
         <h1>ログイン</h1>
-            <form  action="" method="post">
+            <form method="post">
 
                 <input type="text" name="email" placeholder="email" value="<?php if(!empty($_POST['email'])) echo $_POST['email'];?>">
 
@@ -130,5 +130,6 @@ if(!empty($_POST)){
                 <input type="submit" value="送信">
 
             </form>
+
   </body>
 </html>
